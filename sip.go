@@ -41,7 +41,7 @@ type sipVal struct {
 func Parse(v []byte) (output SipMsg) {
 
 	// Allow multiple vias and media Attribs
-	via_idx := 0
+	// via_idx := 0
 	// output.Via = make([]sipVia, 0, 8)
 	attr_idx := 0
 	output.Sdp.Attrib = make([]sdpAttrib, 0, 8)
