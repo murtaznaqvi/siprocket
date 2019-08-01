@@ -10,18 +10,18 @@ var sip_type = 0
 var keep_src = true
 
 type SipMsg struct {
-	Req      sipReq
-	From     sipFrom
-	To       sipTo
-	Contact  sipContact
-	Via      []sipVia
-	Cseq     sipCseq
-	Ua       sipVal
-	Exp      sipVal
-	MaxFwd   sipVal
-	CallId   sipVal
-	ContType sipVal
-	ContLen  sipVal
+	Req  sipReq
+	From sipFrom
+	To   sipTo
+	// Contact sipContact
+	// Via      []sipVia
+	// Cseq     sipCseq
+	// Ua       sipVal
+	// Exp      sipVal
+	// MaxFwd   sipVal
+	CallId sipVal
+	// ContType sipVal
+	// ContLen  sipVal
 
 	Sdp SdpMsg
 }
@@ -42,7 +42,7 @@ func Parse(v []byte) (output SipMsg) {
 
 	// Allow multiple vias and media Attribs
 	via_idx := 0
-	output.Via = make([]sipVia, 0, 8)
+	// output.Via = make([]sipVia, 0, 8)
 	attr_idx := 0
 	output.Sdp.Attrib = make([]sdpAttrib, 0, 8)
 
@@ -70,27 +70,27 @@ func Parse(v []byte) (output SipMsg) {
 					parseSipFrom(lval, &output.From)
 				case lhdr == "t" || lhdr == "to":
 					parseSipTo(lval, &output.To)
-				case lhdr == "m" || lhdr == "contact":
-					parseSipContact(lval, &output.Contact)
-				case lhdr == "v" || lhdr == "via":
-					var tmpVia sipVia
-					output.Via = append(output.Via, tmpVia)
-					parseSipVia(lval, &output.Via[via_idx])
-					via_idx++
+				// case lhdr == "m" || lhdr == "contact":
+				// 	parseSipContact(lval, &output.Contact)
+				// case lhdr == "v" || lhdr == "via":
+				// 	var tmpVia sipVia
+				// 	output.Via = append(output.Via, tmpVia)
+				// 	parseSipVia(lval, &output.Via[via_idx])
+				// 	via_idx++
 				case lhdr == "i" || lhdr == "call-id":
 					output.CallId.Value = lval
-				case lhdr == "c" || lhdr == "content-type":
-					output.ContType.Value = lval
-				case lhdr == "content-length":
-					output.ContLen.Value = lval
-				case lhdr == "user-agent":
-					output.Ua.Value = lval
-				case lhdr == "expires":
-					output.Exp.Value = lval
-				case lhdr == "max-forwards":
-					output.MaxFwd.Value = lval
-				case lhdr == "cseq":
-					parseSipCseq(lval, &output.Cseq)
+					// case lhdr == "c" || lhdr == "content-type":
+					// 	output.ContType.Value = lval
+					// case lhdr == "content-length":
+					// 	output.ContLen.Value = lval
+					// case lhdr == "user-agent":
+					// 	output.Ua.Value = lval
+					// case lhdr == "expires":
+					// 	output.Exp.Value = lval
+					// case lhdr == "max-forwards":
+					// 	output.MaxFwd.Value = lval
+					// case lhdr == "cseq":
+					// 	parseSipCseq(lval, &output.Cseq)
 				} // End of Switch
 			}
 			if spos == 1 && stype == '=' {
@@ -193,56 +193,56 @@ func PrintSipStruct(data *SipMsg) {
 	fmt.Println("    [UserType] =>", string(data.To.UserType))
 	fmt.Println("    [Src] =>", string(data.To.Src))
 	// TO
-	fmt.Println("  [Contact]")
-	fmt.Println("    [UriType] =>", data.Contact.UriType)
-	fmt.Println("    [Name] =>", string(data.Contact.Name))
-	fmt.Println("    [User] =>", string(data.Contact.User))
-	fmt.Println("    [Host] =>", string(data.Contact.Host))
-	fmt.Println("    [Port] =>", string(data.Contact.Port))
-	fmt.Println("    [Transport] =>", string(data.Contact.Tran))
-	fmt.Println("    [Q] =>", string(data.Contact.Qval))
-	fmt.Println("    [Expires] =>", string(data.Contact.Expires))
-	fmt.Println("    [Src] =>", string(data.Contact.Src))
-	// UA
-	fmt.Println("  [Cseq]")
-	fmt.Println("    [Id] =>", string(data.Cseq.Id))
-	fmt.Println("    [Method] =>", string(data.Cseq.Method))
-	fmt.Println("    [Src] =>", string(data.Cseq.Src))
-	// UA
-	fmt.Println("  [User Agent]")
-	fmt.Println("    [Value] =>", string(data.Ua.Value))
-	fmt.Println("    [Src] =>", string(data.Ua.Src))
-	// Exp
-	fmt.Println("  [Expires]")
-	fmt.Println("    [Value] =>", string(data.Exp.Value))
-	fmt.Println("    [Src] =>", string(data.Exp.Src))
-	// MaxFwd
-	fmt.Println("  [Max Forwards]")
-	fmt.Println("    [Value] =>", string(data.MaxFwd.Value))
-	fmt.Println("    [Src] =>", string(data.MaxFwd.Src))
+	// fmt.Println("  [Contact]")
+	// fmt.Println("    [UriType] =>", data.Contact.UriType)
+	// fmt.Println("    [Name] =>", string(data.Contact.Name))
+	// fmt.Println("    [User] =>", string(data.Contact.User))
+	// fmt.Println("    [Host] =>", string(data.Contact.Host))
+	// fmt.Println("    [Port] =>", string(data.Contact.Port))
+	// fmt.Println("    [Transport] =>", string(data.Contact.Tran))
+	// fmt.Println("    [Q] =>", string(data.Contact.Qval))
+	// fmt.Println("    [Expires] =>", string(data.Contact.Expires))
+	// fmt.Println("    [Src] =>", string(data.Contact.Src))
+	// // UA
+	// fmt.Println("  [Cseq]")
+	// fmt.Println("    [Id] =>", string(data.Cseq.Id))
+	// fmt.Println("    [Method] =>", string(data.Cseq.Method))
+	// fmt.Println("    [Src] =>", string(data.Cseq.Src))
+	// // UA
+	// fmt.Println("  [User Agent]")
+	// fmt.Println("    [Value] =>", string(data.Ua.Value))
+	// fmt.Println("    [Src] =>", string(data.Ua.Src))
+	// // Exp
+	// fmt.Println("  [Expires]")
+	// fmt.Println("    [Value] =>", string(data.Exp.Value))
+	// fmt.Println("    [Src] =>", string(data.Exp.Src))
+	// // MaxFwd
+	// fmt.Println("  [Max Forwards]")
+	// fmt.Println("    [Value] =>", string(data.MaxFwd.Value))
+	// fmt.Println("    [Src] =>", string(data.MaxFwd.Src))
 	// CallId
 	fmt.Println("  [Call-ID]")
 	fmt.Println("    [Value] =>", string(data.CallId.Value))
 	fmt.Println("    [Src] =>", string(data.CallId.Src))
-	// Content-Type
-	fmt.Println("  [Content-Type]")
-	fmt.Println("    [Value] =>", string(data.ContType.Value))
-	fmt.Println("    [Src] =>", string(data.ContType.Src))
+	// // Content-Type
+	// fmt.Println("  [Content-Type]")
+	// fmt.Println("    [Value] =>", string(data.ContType.Value))
+	// fmt.Println("    [Src] =>", string(data.ContType.Src))
 
 	// Via - Multiple
-	fmt.Println("  [Via]")
-	for i, via := range data.Via {
-		fmt.Println("    [", i, "]")
-		fmt.Println("      [Tansport] =>", via.Trans)
-		fmt.Println("      [Host] =>", string(via.Host))
-		fmt.Println("      [Port] =>", string(via.Port))
-		fmt.Println("      [Branch] =>", string(via.Branch))
-		fmt.Println("      [Rport] =>", string(via.Rport))
-		fmt.Println("      [Maddr] =>", string(via.Maddr))
-		fmt.Println("      [ttl] =>", string(via.Ttl))
-		fmt.Println("      [Recevied] =>", string(via.Rcvd))
-		fmt.Println("      [Src] =>", string(via.Src))
-	}
+	// fmt.Println("  [Via]")
+	// for i, via := range data.Via {
+	// 	fmt.Println("    [", i, "]")
+	// 	fmt.Println("      [Tansport] =>", via.Trans)
+	// 	fmt.Println("      [Host] =>", string(via.Host))
+	// 	fmt.Println("      [Port] =>", string(via.Port))
+	// 	fmt.Println("      [Branch] =>", string(via.Branch))
+	// 	fmt.Println("      [Rport] =>", string(via.Rport))
+	// 	fmt.Println("      [Maddr] =>", string(via.Maddr))
+	// 	fmt.Println("      [ttl] =>", string(via.Ttl))
+	// 	fmt.Println("      [Recevied] =>", string(via.Rcvd))
+	// 	fmt.Println("      [Src] =>", string(via.Src))
+	// }
 
 	fmt.Println("-SDP --------------------------------")
 	// Media Desc
