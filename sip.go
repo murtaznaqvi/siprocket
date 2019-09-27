@@ -22,6 +22,7 @@ type SipMsg struct {
 	CallId sipVal
 	// ContType sipVal
 	// ContLen  sipVal
+	CellId sipVal
 
 	Sdp SdpMsg
 }
@@ -64,33 +65,22 @@ func Parse(v []byte) (output SipMsg) {
 				lval := bytes.TrimSpace(line[spos+1:])
 
 				// Switch on the line header
-				fmt.Println(i, string(lhdr), string(lval))
 				switch {
 				case lhdr == "f" || lhdr == "from":
 					parseSipFrom(lval, &output.From)
 				case lhdr == "t" || lhdr == "to":
 					parseSipTo(lval, &output.To)
-				// case lhdr == "m" || lhdr == "contact":
-				// 	parseSipContact(lval, &output.Contact)
-				// case lhdr == "v" || lhdr == "via":
-				// 	var tmpVia sipVia
-				// 	output.Via = append(output.Via, tmpVia)
-				// 	parseSipVia(lval, &output.Via[via_idx])
-				// 	via_idx++
 				case lhdr == "i" || lhdr == "call-id":
 					output.CallId.Value = lval
-					// case lhdr == "c" || lhdr == "content-type":
-					// 	output.ContType.Value = lval
-					// case lhdr == "content-length":
-					// 	output.ContLen.Value = lval
-					// case lhdr == "user-agent":
-					// 	output.Ua.Value = lval
-					// case lhdr == "expires":
-					// 	output.Exp.Value = lval
-					// case lhdr == "max-forwards":
-					// 	output.MaxFwd.Value = lval
-					// case lhdr == "cseq":
-					// 	parseSipCseq(lval, &output.Cseq)
+				case lhdr == "p-access-network-info":
+					output.CallId.Src = lval
+					lvalSplit := bytes.Split(lval, []byte(";"))
+					for _, split := range lvalSplit {
+						if bytes.Contains(split, []byte("utran-cell-id-3gpp")) {
+							output.CallId.Value = split[19:]
+						}
+					}
+
 				} // End of Switch
 			}
 			if spos == 1 && stype == '=' {
