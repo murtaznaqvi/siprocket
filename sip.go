@@ -64,7 +64,7 @@ func Parse(v []byte) (output SipMsg) {
 				lval := bytes.TrimSpace(line[spos+1:])
 
 				// Switch on the line header
-				//fmt.Println(i, string(lhdr), string(lval))
+				fmt.Println(i, string(lhdr), string(lval))
 				switch {
 				case lhdr == "f" || lhdr == "from":
 					parseSipFrom(lval, &output.From)
