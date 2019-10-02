@@ -9,26 +9,7 @@ import (
 var sip_type = 0
 var keep_src = true
 
-var firstSIPLine = [][]byte{
-	[]byte("SIP/2.0 "),
-	[]byte("INVITE "),
-	[]byte("REGISTER "),
-	[]byte("ACK "),
-	[]byte("BYE "),
-	[]byte("CANCEL "),
-	[]byte("OPTIONS "),
-	[]byte("PUBLISH "),
-	[]byte("INFO "),
-	[]byte("PRACK "),
-	[]byte("SUBSCRIBE "),
-	[]byte("NOTIFY "),
-	[]byte("UPDATE "),
-	[]byte("MESSAGE "),
-	[]byte("REFER "),
-}
-
 type SipMsg struct {
-	checkSIP bool
 	Req  sipReq
 	From sipFrom
 	To   sipTo
@@ -64,22 +45,15 @@ func Parse(v []byte) (output SipMsg) {
 	// via_idx := 0
 	// output.Via = make([]sipVia, 0, 8)
 	attr_idx := 0
-	output.checkSIP = false
 	output.Sdp.Attrib = make([]sdpAttrib, 0, 8)
 
 	lines := bytes.Split(v, []byte("\r\n"))
 
 	for i, line := range lines {
 		line = bytes.TrimSpace(line)
-		fmt.Println(i, string(line))
 		if i == 0 {
 			// For the first line parse the request
-			if isSIP(line) {
-				output.checkSIP = true
-				parseSipReq(line, &output.Req)
-			} else {
-				break
-			}
+			parseSipReq(line, &output.Req)
 		} else {
 			// For subsequent lines split in sep (: for sip, = for sdp)
 			//sep_sip := bytes.IndexByte(line, ':')
@@ -168,14 +142,6 @@ func getBytes(sl []byte, from, to int) []byte {
 	return sl[from:to]
 }
 
-func isSIP(data []byte) bool {
-	for k := range firstSIPLine {
-		if bytes.Contains(data, firstSIPLine[k]) {
-			return true
-		}
-	}
-	return false
-}
 
 // Function to print all we know about the struct in a readable format
 func PrintSipStruct(data *SipMsg) {
