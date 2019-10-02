@@ -4,10 +4,29 @@ import (
 	"bytes"
 	"fmt"
 	"strings"
+	"strconv"
 )
 
 var sip_type = 0
 var keep_src = true
+
+var firstSIPLine = [][]byte{
+	[]byte("SIP/2.0 "),
+	[]byte("INVITE "),
+	[]byte("REGISTER "),
+	[]byte("ACK "),
+	[]byte("BYE "),
+	[]byte("CANCEL "),
+	[]byte("OPTIONS "),
+	[]byte("PUBLISH "),
+	[]byte("INFO "),
+	[]byte("PRACK "),
+	[]byte("SUBSCRIBE "),
+	[]byte("NOTIFY "),
+	[]byte("UPDATE "),
+	[]byte("MESSAGE "),
+	[]byte("REFER "),
+}
 
 type SipMsg struct {
 	checkSIP bool
@@ -46,7 +65,7 @@ func Parse(v []byte) (output SipMsg) {
 	// via_idx := 0
 	// output.Via = make([]sipVia, 0, 8)
 	attr_idx := 0
-	checkSIP = false
+	output.checkSIP = false
 	output.Sdp.Attrib = make([]sdpAttrib, 0, 8)
 
 	lines := bytes.Split(v, []byte("\r\n"))
@@ -57,7 +76,7 @@ func Parse(v []byte) (output SipMsg) {
 		if i == 0 {
 			// For the first line parse the request
 			if isSIP(packetData) {
-				checkSIP = true
+				output.checkSIP = true
 				parseSipReq(line, &output.Req)
 			} else {
 				break
