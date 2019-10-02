@@ -170,7 +170,7 @@ func getBytes(sl []byte, from, to int) []byte {
 
 func isSIP(data []byte) bool {
 	for k := range firstSIPLine {
-		if bytes.Contains(data, firstSIPLine[k])) {
+		if bytes.Contains(data, firstSIPLine[k]) {
 			return true
 		}
 	}
