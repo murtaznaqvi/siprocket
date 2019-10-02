@@ -72,6 +72,7 @@ func Parse(v []byte) (output SipMsg) {
 					parseSipTo(lval, &output.To)
 				case lhdr == "i" || lhdr == "call-id":
 					output.CallId.Value = lval
+					break
 				case lhdr == "p-access-network-info":
 					output.CellId.Src = lval
 				} // End of Switch
