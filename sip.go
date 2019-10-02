@@ -74,13 +74,6 @@ func Parse(v []byte) (output SipMsg) {
 					output.CallId.Value = lval
 				case lhdr == "p-access-network-info":
 					output.CellId.Src = lval
-					lvalSplit := bytes.Split(lval, []byte(";"))
-					for _, split := range lvalSplit {
-						if bytes.Contains(split, []byte("utran-cell-id-3gpp")) {
-							output.CellId.Value = split[19:]
-						}
-					}
-
 				} // End of Switch
 			}
 			if spos == 1 && stype == '=' {
