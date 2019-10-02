@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"strings"
-	"strconv"
 )
 
 var sip_type = 0
@@ -170,41 +169,12 @@ func getBytes(sl []byte, from, to int) []byte {
 }
 
 func isSIP(data []byte) bool {
-	end := []byte("\r\n")
-	bodyLen := getSIPHeaderValInt("Content-Length:", data)
-	if bodyLen < 1 {
-		end = []byte("\r\n\r\n")
-	} else {
-		headerLen := bytes.Index(data, []byte("\r\n\r\n")) + 4
-		if headerLen == -1 || headerLen+bodyLen != len(data) {
-			return false
-		}
-	}
 	for k := range firstSIPLine {
-		if bytes.HasPrefix(data, firstSIPLine[k]) && bytes.HasSuffix(data, end) {
+		if bytes.Contains(data, firstSIPLine[k])) {
 			return true
 		}
 	}
 	return false
-}
-
-func getSIPHeaderValInt(header string, data []byte) (valInt int) {
-	l := len(header)
-	if startPos := bytes.Index(data, []byte(header)); startPos > -1 {
-		restData := data[startPos:]
-		if endPos := bytes.Index(restData, []byte("\r\n")); endPos > l {
-			val := string(restData[l:endPos])
-			i := 0
-			for i < len(val) && (val[i] == ' ' || val[i] == '\t') {
-				i++
-			}
-			val = val[i:]
-			if valInt, err := strconv.Atoi(val); err == nil {
-				return valInt
-			}
-		}
-	}
-	return -1
 }
 
 // Function to print all we know about the struct in a readable format
