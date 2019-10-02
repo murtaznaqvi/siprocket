@@ -71,8 +71,8 @@ func Parse(v []byte) (output SipMsg) {
 	lines := bytes.Split(v, []byte("\r\n"))
 
 	for i, line := range lines {
-		//fmt.Println(i, string(line))
 		line = bytes.TrimSpace(line)
+		fmt.Println(i, string(line))
 		if i == 0 {
 			// For the first line parse the request
 			if isSIP(line) {
