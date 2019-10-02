@@ -10,6 +10,7 @@ var sip_type = 0
 var keep_src = true
 
 type SipMsg struct {
+	checkSIP bool
 	Req  sipReq
 	From sipFrom
 	To   sipTo
@@ -45,6 +46,7 @@ func Parse(v []byte) (output SipMsg) {
 	// via_idx := 0
 	// output.Via = make([]sipVia, 0, 8)
 	attr_idx := 0
+	checkSIP = false
 	output.Sdp.Attrib = make([]sdpAttrib, 0, 8)
 
 	lines := bytes.Split(v, []byte("\r\n"))
@@ -54,7 +56,12 @@ func Parse(v []byte) (output SipMsg) {
 		line = bytes.TrimSpace(line)
 		if i == 0 {
 			// For the first line parse the request
-			parseSipReq(line, &output.Req)
+			if isSIP(packetData) {
+				checkSIP = true
+				parseSipReq(line, &output.Req)
+			} else {
+				break
+			}
 		} else {
 			// For subsequent lines split in sep (: for sip, = for sdp)
 			//sep_sip := bytes.IndexByte(line, ':')
@@ -141,6 +148,44 @@ func getBytes(sl []byte, from, to int) []byte {
 		return sl[from:]
 	}
 	return sl[from:to]
+}
+
+func isSIP(data []byte) bool {
+	end := []byte("\r\n")
+	bodyLen := getSIPHeaderValInt("Content-Length:", data)
+	if bodyLen < 1 {
+		end = []byte("\r\n\r\n")
+	} else {
+		headerLen := bytes.Index(data, []byte("\r\n\r\n")) + 4
+		if headerLen == -1 || headerLen+bodyLen != len(data) {
+			return false
+		}
+	}
+	for k := range firstSIPLine {
+		if bytes.HasPrefix(data, firstSIPLine[k]) && bytes.HasSuffix(data, end) {
+			return true
+		}
+	}
+	return false
+}
+
+func getSIPHeaderValInt(header string, data []byte) (valInt int) {
+	l := len(header)
+	if startPos := bytes.Index(data, []byte(header)); startPos > -1 {
+		restData := data[startPos:]
+		if endPos := bytes.Index(restData, []byte("\r\n")); endPos > l {
+			val := string(restData[l:endPos])
+			i := 0
+			for i < len(val) && (val[i] == ' ' || val[i] == '\t') {
+				i++
+			}
+			val = val[i:]
+			if valInt, err := strconv.Atoi(val); err == nil {
+				return valInt
+			}
+		}
+	}
+	return -1
 }
 
 // Function to print all we know about the struct in a readable format
