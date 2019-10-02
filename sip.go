@@ -75,7 +75,7 @@ func Parse(v []byte) (output SipMsg) {
 		line = bytes.TrimSpace(line)
 		if i == 0 {
 			// For the first line parse the request
-			if isSIP(packetData) {
+			if isSIP(line) {
 				output.checkSIP = true
 				parseSipReq(line, &output.Req)
 			} else {
