@@ -53,7 +53,7 @@ func Parse(v []byte) (output SipMsg) {
 
 	for i, line := range lines {
 		if checkto && checkfrom {
-			return
+			break
 		}
 		line = bytes.TrimSpace(line)
 		if i == 0 {
