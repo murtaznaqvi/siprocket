@@ -48,12 +48,17 @@ func Parse(v []byte) (output SipMsg) {
 	output.Sdp.Attrib = make([]sdpAttrib, 0, 8)
 
 	lines := bytes.Split(v, []byte("\r\n"))
+	checkto := false
+	checkfrom := false
 
 	for i, line := range lines {
+		if checkto && checkfrom {
+			return
+		}
 		line = bytes.TrimSpace(line)
 		if i == 0 {
 			// For the first line parse the request
-			parseSipReq(line, &output.Req)
+			continue
 		} else {
 			// For subsequent lines split in sep (: for sip, = for sdp)
 			//sep_sip := bytes.IndexByte(line, ':')
@@ -66,12 +71,13 @@ func Parse(v []byte) (output SipMsg) {
 				// Switch on the line header
 				switch {
 				case lhdr == "f" || lhdr == "from":
-					parseSipFrom(lval, &output.From)
+					checkfrom = true
+					parseSipFrom(lval, &output.From)	
 				case lhdr == "t" || lhdr == "to":
+					checkto = true
 					parseSipTo(lval, &output.To)
 				case lhdr == "i" || lhdr == "call-id":
 					output.CallId.Value = lval
-					break
 				case lhdr == "p-access-network-info":
 					output.CellId.Src = lval
 				} // End of Switch
