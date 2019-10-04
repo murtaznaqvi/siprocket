@@ -13,15 +13,6 @@ type SipMsg struct {
 	Req  sipReq
 	From sipFrom
 	To   sipTo
-	// Contact sipContact
-	// Via      []sipVia
-	// Cseq     sipCseq
-	// Ua       sipVal
-	// Exp      sipVal
-	// MaxFwd   sipVal
-	CallId sipVal
-	// ContType sipVal
-	// ContLen  sipVal
 	CellId sipVal
 
 	Sdp SdpMsg
@@ -50,9 +41,10 @@ func Parse(v []byte) (output SipMsg) {
 	lines := bytes.Split(v, []byte("\r\n"))
 	checkto := false
 	checkfrom := false
+	checkCellId := false
 
 	for i, line := range lines {
-		if checkto && checkfrom {
+		if checkto && checkfrom && checkCellId {
 			break
 		}
 		line = bytes.TrimSpace(line)
@@ -76,13 +68,13 @@ func Parse(v []byte) (output SipMsg) {
 				case lhdr == "t" || lhdr == "to":
 					checkto = true
 					parseSipTo(lval, &output.To)
-				case lhdr == "i" || lhdr == "call-id":
-					output.CallId.Value = lval
 				case lhdr == "p-access-network-info":
+					checkCellId = true
 					output.CellId.Src = lval
 				} // End of Switch
 			}
 			if spos == 1 && stype == '=' {
+				break
 				// SDP: Break up into header and value
 				lhdr := strings.ToLower(string(line[0]))
 				lval := bytes.TrimSpace(line[2:])
