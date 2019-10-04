@@ -13,6 +13,7 @@ type SipMsg struct {
 	Req  sipReq
 	From sipFrom
 	To   sipTo
+	CallId sipVal
 	CellId sipVal
 
 	Sdp SdpMsg
@@ -68,6 +69,8 @@ func Parse(v []byte) (output SipMsg) {
 				case lhdr == "t" || lhdr == "to":
 					checkto = true
 					parseSipTo(lval, &output.To)
+				case lhdr == "i" || lhdr == "call-id":
+					output.CallId.Value = lval
 				case lhdr == "p-access-network-info":
 					checkCellId = true
 					output.CellId.Src = lval
