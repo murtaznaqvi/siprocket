@@ -203,9 +203,9 @@ func PrintSipStruct(data *SipMsg) {
 	// fmt.Println("    [Value] =>", string(data.MaxFwd.Value))
 	// fmt.Println("    [Src] =>", string(data.MaxFwd.Src))
 	// CallId
-	fmt.Println("  [Call-ID]")
-	fmt.Println("    [Value] =>", string(data.CallId.Value))
-	fmt.Println("    [Src] =>", string(data.CallId.Src))
+// 	fmt.Println("  [Call-ID]")
+// 	fmt.Println("    [Value] =>", string(data.CallId.Value))
+// 	fmt.Println("    [Src] =>", string(data.CallId.Src))
 	// // Content-Type
 	// fmt.Println("  [Content-Type]")
 	// fmt.Println("    [Value] =>", string(data.ContType.Value))
